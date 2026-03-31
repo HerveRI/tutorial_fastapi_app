@@ -1,0 +1,13 @@
+#env variables
+.env
+
+#Virtual env
+.venv
+
+#Editor
+.vscode/
+
+#Python ByteCode
+__pycache__/
+*.py[cod]
+

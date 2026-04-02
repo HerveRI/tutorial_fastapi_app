@@ -1,14 +1,16 @@
 from fastapi import FastAPI
 from . import db_models
 from .database import engine
-from .routers import post, user, auth
+from .routers import post, user, auth, vote
 
-db_models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+db_models.Base.metadata.create_all(bind=engine)
+
 
 app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
+app.include_router(vote.router)
 
 @app.get("/")
 async def root():

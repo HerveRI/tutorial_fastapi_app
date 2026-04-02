@@ -1,18 +1,26 @@
 from fastapi import status, Depends, HTTPException, APIRouter, Response
 from typing import List, Optional
-from .. import utils, schema, db_models, oauth2
+from .. import schema, db_models, oauth2
 from ..database import get_db
 from sqlalchemy.orm import Session 
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/posts",
     tags=["Posts"]
 )
 
-@router.get("/", response_model=List[schema.PostResponse])
+#@router.get("/", response_model=List[schema.PostResponse])
+@router.get("/", response_model=List[schema.PostOut])
 async def get_posts(db: Session = Depends(get_db), current_user:int = Depends(oauth2.get_current_user),
                      limit: int = 10, skip: int = 0, search: Optional[str] = ""):
-    posts = db.query(db_models.Post).filter(db_models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    posts = db.query(db_models.Post).filter(
+        db_models.Post.title.contains(search)).limit(limit).offset(skip).all()
+    
+    results = db.query(db_models.Post, func.count(db_models.Vote.post_id).label("votes")).join(
+        db_models.Vote, db_models.Vote.post_id==db_models.Post.id, isouter=True).group_by(
+            db_models.Post.id).filter(
+        db_models.Post.title.contains(search)).limit(limit).offset(skip).all()
     # cursor.execute("""SELECT * FROM posts""")
     # posts = cursor.fetchall()
     # 
@@ -20,7 +28,7 @@ async def get_posts(db: Session = Depends(get_db), current_user:int = Depends(oa
     # And to investigate how the str and int are getting mismatched?
     #  
     print(type(current_user))
-    return posts
+    return results
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.PostResponse)
 async def create_posts(post: schema.PostCreate, db: Session = Depends(get_db), current_user:int = Depends(oauth2.get_current_user)):
@@ -38,9 +46,12 @@ async def create_posts(post: schema.PostCreate, db: Session = Depends(get_db), c
     return new_post
 
 #path parameter id
-@router.get("/{id}", response_model=schema.PostResponse)
+@router.get("/{id}", response_model=schema.PostOut)
 async def get_post(id: int, db: Session = Depends(get_db), current_user:int = Depends(oauth2.get_current_user)):
-    post = db.query(db_models.Post).filter(db_models.Post.id == id).first()
+    #post = db.query(db_models.Post).filter(db_models.Post.id == id).first()
+    post = db.query(db_models.Post, func.count(db_models.Vote.post_id).label("votes")).join(
+        db_models.Vote, db_models.Vote.post_id==db_models.Post.id, isouter=True).group_by(
+            db_models.Post.id).filter(db_models.Post.id == id).first()
     # cursor.execute("""SELECT * FROM posts WHERE id = %s """, [str(id)])
     # post = cursor.fetchone()
 

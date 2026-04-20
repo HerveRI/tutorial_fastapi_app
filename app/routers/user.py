@@ -4,9 +4,12 @@ from ..database import get_db
 from sqlalchemy.orm import Session 
 
 
-router = APIRouter()
+router = APIRouter(
+    prefix="/users",
+    tags=['Users']
+)
 
-@router.post("/users", status_code=status.HTTP_201_CREATED, response_model=schema.UserResponse)
+@router.post("/", status_code=status.HTTP_201_CREATED, response_model=schema.UserResponse)
 async def create_user(info: schema.UserCreate, db: Session = Depends(get_db)):
 
     #hash password
@@ -21,7 +24,7 @@ async def create_user(info: schema.UserCreate, db: Session = Depends(get_db)):
 
 
 #path parameter id
-@router.get("/users/{id}", response_model=schema.UserResponse)
+@router.get("/{id}", response_model=schema.UserResponse)
 async def get_user(id: int, db: Session = Depends(get_db)):
     user = db.query(db_models.Users).filter(db_models.Users.id == id).first()
     # cursor.execute("""SELECT * FROM posts WHERE id = %s """, [str(id)])

@@ -1,0 +1,12 @@
+name: Build and Deploy Code
+
+on: [push, pull_request]
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Custom steps
+        run: ech "hello from the ci/cd pipeline"

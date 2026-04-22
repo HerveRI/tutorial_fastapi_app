@@ -8,5 +8,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      - name: Custom steps
-        run: echo "hello from the ci/cd pipeline"
+      - name: Install Python version 3.12
+        uses: actions/setup-python@v5
+        with: 
+          python-version: "3.12"
+      - name: Update pip
+        run: python -m pip install --upgrade pip
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run tests with pytest
+        run: |
+          pip install pytest
+          pytest
+  
+

@@ -9,4 +9,4 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
       - name: Custom steps
-        run: ech "hello from the ci/cd pipeline"
+        run: echo "hello from the ci/cd pipeline"

@@ -52,7 +52,7 @@ from app.config import settings
 def test_root(client):
     res = client.get("/")
     print(res.json().get('message'))
-    assert res.json().get('message') == "Welcome to my API"
+    assert res.json().get('message') == "Welcome to my API - Successfuly CI/CD witn DG_Ocean"
     assert res.status_code == 200
 
 # Pass in the client fixture

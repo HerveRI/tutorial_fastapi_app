@@ -85,5 +85,5 @@ jobs:
           script: |
             cd app/src
             git pull origin main
-            sudo systemctl restart socialapp
+            sudo systemctl restart socialapp.service
             systemctl is-active --quiet socialapp.service && echo "Service is UP"

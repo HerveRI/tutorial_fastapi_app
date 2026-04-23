@@ -27,4 +27,4 @@ app.include_router(vote.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Welcome to my API - Successfuly CI/CD witn DG_Ocean"}
+    return {"message": "Welcome to my API"}
